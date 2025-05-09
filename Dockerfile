@@ -4,39 +4,25 @@ FROM python:3.11-slim
 
 WORKDIR /app
 
-# Copia apenas requirements para cache
+# 1) Copia só o requirements para otimizar cache
 COPY requirements.txt /app/
 
-# Adiciona chave e repositório do k6
-RUN apt-get update && apt-get install -y --no-install-recommends gnupg curl \
+# 2) Instala gnupg e curl, adiciona repositório do k6
+RUN apt-get update && apt-get install -y gnupg curl \
   && curl -s https://dl.k6.io/key.gpg | apt-key add - \
   && echo "deb https://dl.k6.io/deb stable main" > /etc/apt/sources.list.d/k6.list
 
-# Instala todas as CLIs que você precisa
-RUN apt-get update && apt-get install -y --no-install-recommends \
-    nmap \           # Play 01
-    hydra \          # Play 02
-    sqlmap \         # Play 03
-    jmeter \         # Play 04
-    curl \           # Play 06 e 10
-    apache2-utils \  # ab (Play 06)
-    k6 \             # Play 09
-    default-jre-headless \  # Java p/ JMeter/Appium
-    nodejs npm \     # k6 e outras ferramentas Node
-    iputils-ping \   # ping
-    netcat-openbsd \ # netcat
-    git              # git p/ clonar Nikto
-  && rm -rf /var/lib/apt/lists/*
+# 3) Instala todas as ferramentas numa única linha (sem comentários nem \ no final)
+RUN apt-get update && apt-get install -y --no-install-recommends nmap hydra sqlmap nikto curl apache2-utils jmeter k6 default-jre-headless nodejs npm iputils-ping netcat-openbsd git && rm -rf /var/lib/apt/lists/*
 
-# Clona e instala o Nikto porque não vem no apt
-RUN git clone https://github.com/sullo/nikto.git /opt/nikto \
-  && ln -s /opt/nikto/program/nikto.pl /usr/local/bin/nikto
+# 4) Clona o Nikto e expõe o script
+RUN git clone https://github.com/sullo/nikto.git /opt/nikto && ln -s /opt/nikto/program/nikto.pl /usr/local/bin/nikto
 
-# Instala libs Python
+# 5) Instala dependências Python
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copia seu código
+# 6) Copia o restante do código
 COPY . /app
 
-# Inicia o Flask
+# 7) Inicia o Flask
 CMD ["python", "app.py"]
