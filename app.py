@@ -1,10 +1,22 @@
 from flask import Flask, Response, stream_with_context, send_from_directory, jsonify
+from flask_sqlalchemy import SQLAlchemy
+from flask import request
+
+db = SQLAlchemy()
+
+class Formulario(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    nome = db.Column(db.String(100), nullable=False)
+    email = db.Column(db.String(120), nullable=False)
+    mensagem = db.Column(db.Text, nullable=False)
 from flask_cors import CORS
 import subprocess
 import os
 import requests
 
 app = Flask(__name__, static_folder='plays', static_url_path='/plays')
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///cadastros.db'
+db.init_app(app)
 CORS(app, origins="*", supports_credentials=True)
 
 # Serve arquivos estáticos de cada play
@@ -49,6 +61,14 @@ def api_news():
         params={'apiKey': NEWS_API_KEY}
     )
     return jsonify(resp.json())
+
+@app.route('/api/cadastro', methods=['POST'])
+def cadastro():
+    data = request.json
+    novo = Formulario(nome=data['nome'], email=data['email'], mensagem=data['mensagem'])
+    db.session.add(novo)
+    db.session.commit()
+    return jsonify({'status': 'sucesso'})
 
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 5000))
