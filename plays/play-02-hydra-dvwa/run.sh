@@ -2,6 +2,7 @@
 #
 # denis-play-backend/plays/play-02-hydra-dvwa/run.sh
 
+
 # muda para o diretório do script
 cd "$(dirname "$0")"
 
