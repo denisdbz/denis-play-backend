@@ -4,9 +4,11 @@
 
 
 # muda para o diretório do script
+
 cd "$(dirname "$0")"
 
 # host e porta padrão (serviço docker-compose)
+
 HOST=${1:-dvwa}
 PORT=${2:-80}
 
