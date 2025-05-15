@@ -1,0 +1,15 @@
+{
+  "name": "play-07-mobile-automation",
+  "version": "1.0.0",
+  "scripts": {
+    "test": "wdio run wdio.conf.js"
+  },
+  "dependencies": {
+    "@wdio/cli": "^8.28.0",
+    "@wdio/local-runner": "^8.28.0",
+    "@wdio/mocha-framework": "^8.28.0",
+    "@wdio/spec-reporter": "^8.28.0",
+    "@wdio/sync": "^8.28.0",
+    "chromedriver": "^121.0.0"
+  }
+}
