@@ -8,7 +8,7 @@ JMX_FILE="$SCRIPT_DIR/teste-carga.jmx"
 
 # Testa se está rodando no Railway
 if [[ -x "/opt/apache-jmeter-5.6.2/bin/jmeter" ]]; then
-  JMETER_EXEC="/opt/apache-jmeter-5.6.2/bin/jmeter"
+JMETER_EXEC="$(dirname "$0")/../../tools/apache-jmeter-5.6.2/bin/jmeter"
 elif [[ -x "/opt/jmeter/bin/jmeter" ]]; then
   JMETER_EXEC="/opt/jmeter/bin/jmeter"
 else
