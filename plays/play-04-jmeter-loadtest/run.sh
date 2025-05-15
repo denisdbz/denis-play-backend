@@ -7,6 +7,7 @@ SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 JMX_FILE="$SCRIPT_DIR/teste-carga.jmx"
 JMETER_HOME="/opt/apache-jmeter-5.6.2"
 
+
 if [[ ! -f "$JMX_FILE" ]]; then
   echo "[X] Arquivo teste-carga.jmx não encontrado em $JMX_FILE."
   exit 1
