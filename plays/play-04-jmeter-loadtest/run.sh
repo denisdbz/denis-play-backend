@@ -1,16 +1,22 @@
 #!/bin/bash
+
 echo "[*] Iniciando teste de carga com JMeter..."
 sleep 1
 
-if [[ ! -f teste-carga.jmx ]]; then
-  echo "[X] Arquivo teste-carga.jmx não encontrado."
+# Caminho absoluto do diretório do script
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+
+# Caminho absoluto para o .jmx
+JMX_FILE="$SCRIPT_DIR/teste-carga.jmx"
+
+if [[ ! -f "$JMX_FILE" ]]; then
+  echo "[X] Arquivo teste-carga.jmx não encontrado em $JMX_FILE."
   exit 1
 fi
 
-# Executa o teste
-jmeter -n -t teste-carga.jmx -l resultados.jtl
+# Executa o JMeter com caminho absoluto
+jmeter -n -t "$JMX_FILE" -l "$SCRIPT_DIR/resultados.jtl"
 
-# Verifica se a execução ocorreu com sucesso
 if [[ $? -eq 0 ]]; then
   echo "[✓] Teste com JMeter finalizado. Logs salvos em resultados.jtl."
   echo "[✓] Teste finalizado com sucesso."
