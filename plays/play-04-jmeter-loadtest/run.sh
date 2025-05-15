@@ -15,7 +15,9 @@ if [[ ! -f "$JMX_FILE" ]]; then
 fi
 
 # Executa o JMeter com caminho absoluto
-jmeter -n -t "$JMX_FILE" -l "$SCRIPT_DIR/resultados.jtl"
+# Executa o JMeter com correção para o erro de ScriptWrapper
+jmeter -n -t "$JMX_FILE" -l "$SCRIPT_DIR/resultados.jtl" \
+  -Jclassloader.include=org.apache.jmeter.save.ScriptWrapper
 
 if [[ $? -eq 0 ]]; then
   echo "[✓] Teste com JMeter finalizado. Logs salvos em resultados.jtl."
