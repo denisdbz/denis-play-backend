@@ -6,13 +6,16 @@ sleep 1
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 JMX_FILE="$SCRIPT_DIR/teste-carga.jmx"
 
-# Testa se está rodando no Railway
-if [[ -x "/opt/apache-jmeter-5.6.2/bin/jmeter" ]]; then
-JMETER_EXEC="$(dirname "$0")/../../tools/apache-jmeter-5.6.2/bin/jmeter"
+# 1. Usa o JMeter embutido (ideal para Railway)
+if [[ -x "$SCRIPT_DIR/../../tools/apache-jmeter-5.6.2/bin/jmeter" ]]; then
+  JMETER_EXEC="$SCRIPT_DIR/../../tools/apache-jmeter-5.6.2/bin/jmeter"
+# 2. Fallback para instalações locais
+elif [[ -x "/opt/apache-jmeter-5.6.2/bin/jmeter" ]]; then
+  JMETER_EXEC="/opt/apache-jmeter-5.6.2/bin/jmeter"
 elif [[ -x "/opt/jmeter/bin/jmeter" ]]; then
   JMETER_EXEC="/opt/jmeter/bin/jmeter"
 else
-  echo "[X] JMeter não encontrado em /opt. Você está no Railway?"
+  echo "[X] JMeter não encontrado. Verifique o ambiente."
   exit 1
 fi
 
