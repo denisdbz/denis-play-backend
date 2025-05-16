@@ -15,7 +15,7 @@ SCRIPT_DIR="$(dirname "$SCRIPT_PATH")"
 COOKIE_FILE="$SCRIPT_DIR/cookies.txt"
 
 # 1. Login e captura cookies (segue redirect)
-curl -s -c "$COOKIE_FILE" -L \
+curl -ks -c "$COOKIE_FILE" -L \
   -d "username=admin&password=password&Login=Login" \
   "https://$TARGET_HOST/login.php" > /dev/null
 
