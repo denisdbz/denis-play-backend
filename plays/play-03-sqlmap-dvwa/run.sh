@@ -10,8 +10,7 @@ TARGET_HOST="${DVWA_HOST:-web-dvwa-production.up.railway.app}"
 echo "[*] Autenticando no DVWA em https://$TARGET_HOST/login.php..."
 
 # Resolve path absoluto do script e diretório
-override BASH_SOURCE=("$0")
-SCRIPT_PATH="$(readlink -f "${BASH_SOURCE[0]}")"
+SCRIPT_PATH="$(readlink -f "$0")"
 SCRIPT_DIR="$(dirname "$SCRIPT_PATH")"
 COOKIE_FILE="$SCRIPT_DIR/cookies.txt"
 
