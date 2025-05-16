@@ -1,16 +1,14 @@
 #!/usr/bin/env bash
 
-
 # Play 03 — Sqlmap DVWA
-
 # Autenticação e análise de SQLi em produção sem interatividade
 set -euo pipefail
 
 # Host do DVWA (sem incluir porta)
 TARGET_HOST="${DVWA_HOST:-web-dvwa-production.up.railway.app}"
 
-# Determina diretório deste script
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+# Determina diretório deste script (compatível com sh/bash)
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 COOKIE_FILE="$SCRIPT_DIR/cookies.txt"
 
 echo "[*] Autenticando no DVWA em https://$TARGET_HOST/login.php..."
@@ -26,7 +24,7 @@ curl -ks -b "$COOKIE_FILE" -L \
 # 2. Extrai PHPSESSID do cookie file
 echo "[DEBUG] cookies em $COOKIE_FILE:" >&2
 cat "$COOKIE_FILE" >&2
-PHPSESSID=$(grep PHPSESSID "$COOKIE_FILE" | awk '{print $NF}')
+PHPSESSID=$(awk '/PHPSESSID/ {print $NF}' "$COOKIE_FILE")
 if [ -z "$PHPSESSID" ]; then
   echo "[ERROR] PHPSESSID não encontrado em $COOKIE_FILE" >&2
   exit 1
