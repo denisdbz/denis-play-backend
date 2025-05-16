@@ -1,4 +1,4 @@
-k#!/bin/bash
+#!/bin/bash
 
 # Play 03 — SQLMap DVWA em produção
 # Autentica no DVWA e roda sqlmap corretamente, usando --cookie e auto-follow redirects
@@ -42,4 +42,3 @@ sqlmap \
 
 # Mensagem de fim de teste
 echo "[✓] Análise SQLi concluída."
-
