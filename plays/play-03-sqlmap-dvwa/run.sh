@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
 
+
 # Play 03 — Sqlmap DVWA
+
 # Autenticação e análise de SQLi em produção sem interatividade
 set -euo pipefail
 
